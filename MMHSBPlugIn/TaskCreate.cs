@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.Xrm.Sdk;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xrm.Sdk;
 
 namespace MMHSBPlugIn
 {
-    public class ContactAddNote : IPlugin
+    public class TaskCreate : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
         {
@@ -33,24 +33,44 @@ namespace MMHSBPlugIn
                     (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
                 IOrganizationService service = serviceFactory.CreateOrganizationService(context.UserId);
 
-                #region contact create
 
-                if (entity.LogicalName == "contact")
+
+                #region Create a task activity to follow up with the account customer in 7 days.
+
+                if (entity.LogicalName == "account")
                 {
                     try
                     {
-                        // Plug-in business logic goes here.
+                        // Plug-in business logic goes here.  
+                        // Create a task activity to follow up with the account customer in 7 days. 
+                        Entity followup = new Entity("task");
 
+                        followup["subject"] = "Send e-mail to the new customer.";
+                        followup["description"] =
+                            "Follow up with the customer. Check if there are any new issues that need resolution.";
+                        followup["scheduledstart"] = DateTime.Now.AddDays(7);
+                        followup["scheduledend"] = DateTime.Now.AddDays(7);
+                        followup["category"] = context.PrimaryEntityName;
+                        followup["prioritycode"] = new OptionSetValue(1);// Normal
 
-                        var firstName = string.Empty;
-                        if (entity.Attributes.Contains("firstname"))
-                            firstName = entity.Attributes["firstname"].ToString();
-                        var lastname = entity.Attributes["lastname"].ToString(); //lastname is mandatory field
-                        entity["description"] = "Hello " + firstName + " " + lastname + "!";
+                        string regardingobjectidType = "account";
+                        Guid regardingobjectid = Guid.Empty;
+
+                        // Refer to the account in the task activity.
+                        //if (context.OutputParameters.Contains("id"))
+                        //{
+                        //    regardingobjectid = new Guid(context.OutputParameters["id"].ToString());
+                        //}
+                        regardingobjectid= entity.Id;
+
+                        //followup["regardingobjectid"] =
+                        //    new EntityReference(regardingobjectidType, regardingobjectid);
+
+                        followup["regardingobjectid"] = entity.ToEntityReference();
 
                         // Create the task in Microsoft Dynamics CRM.
                         tracingService.Trace("FollowupPlugin: Creating the task activity.");
-                        //service.Update(entity);
+                        var taskGuid = service.Create(followup);
                     }
 
                     catch (FaultException<OrganizationServiceFault> ex)
@@ -66,8 +86,6 @@ namespace MMHSBPlugIn
                 }
 
                 #endregion
-
-                 
             }
         }
     }
