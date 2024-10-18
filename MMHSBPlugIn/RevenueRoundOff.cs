@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xrm.Sdk;
 
 namespace MMHSBPlugIn
 {
-    public class ContactAddNote : IPlugin
+    public class RevenueRoundOff : IPlugin
     {
         public void Execute(IServiceProvider serviceProvider)
         {
@@ -33,43 +34,30 @@ namespace MMHSBPlugIn
                     (IOrganizationServiceFactory)serviceProvider.GetService(typeof(IOrganizationServiceFactory));
                 IOrganizationService service = serviceFactory.CreateOrganizationService(context.UserId);
 
-                #region contact create
 
-                if (entity.LogicalName == "contact")
+
+                #region revenue
+
+                if (entity.LogicalName == "account")
                 {
-                    try
+                    tracingService.Trace(context.Depth.ToString());
+                    //if(context.Depth > 1)
+                    //{
+                    //    return;
+                    //}
+                    if (entity.Attributes["revenue"] != null)
                     {
+                        var revenue = ((Money)entity.Attributes["revenue"]).Value;
+                        revenue= Math.Round(revenue, 1);
+                        entity.Attributes["revenue"] = new Money(revenue);
 
-                        // Plug-in business logic goes here.
-                        context.SharedVariables.Add("key1","some info");
-
-                        var firstName = string.Empty;
-                        if (entity.Attributes.Contains("firstname"))
-                            firstName = entity.Attributes["firstname"].ToString();
-                        var lastname = entity.Attributes["lastname"].ToString(); //lastname is mandatory field
-                        entity["description"] = "Hello " + firstName + " " + lastname + "!";
-
-                        // Create the task in Microsoft Dynamics CRM.
-                        tracingService.Trace("FollowupPlugin: Creating the task activity.");
-                        //service.Update(entity);
                     }
-
-                    catch (FaultException<OrganizationServiceFault> ex)
-                    {
-                        throw new InvalidPluginExecutionException("An error occurred in FollowUpPlugin.", ex);
-                    }
-
-                    catch (Exception ex)
-                    {
-                        tracingService.Trace("FollowUpPlugin: {0}", ex.ToString());
-                        throw;
-                    }
+                    
                 }
 
                 #endregion
-
-                 
             }
         }
+
     }
 }

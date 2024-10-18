@@ -10,6 +10,11 @@ namespace MMHSBPlugIn
 {
     public class TaskCreate : IPlugin
     {
+        private int tax;
+        public TaskCreate(string unsecureConfig, string secureConfig)
+        {
+            Int32.TryParse(unsecureConfig, out tax);
+        }
         public void Execute(IServiceProvider serviceProvider)
         {
             // Obtain the tracing service
@@ -35,25 +40,27 @@ namespace MMHSBPlugIn
 
 
 
-                #region Create a task activity to follow up with the account customer in 7 days.
+                #region Create a task activity to follow up with the account contact in 7 days.
 
-                if (entity.LogicalName == "account")
+                if (entity.LogicalName == "contact")
                 {
                     try
                     {
+                        var sharedVariableValue= context.SharedVariables["key1"];
+
                         // Plug-in business logic goes here.  
-                        // Create a task activity to follow up with the account customer in 7 days. 
+                        // Create a task activity to follow up with the contact in 7 days. 
                         Entity followup = new Entity("task");
 
-                        followup["subject"] = "Send e-mail to the new customer.";
+                        followup["subject"] = "Send e-mail to the new contact.";
                         followup["description"] =
-                            "Follow up with the customer. Check if there are any new issues that need resolution.";
+                            $"Follow up with the contact. Check if there are any new issues that need resolution. sharedVariableValue {sharedVariableValue}";
                         followup["scheduledstart"] = DateTime.Now.AddDays(7);
                         followup["scheduledend"] = DateTime.Now.AddDays(7);
                         followup["category"] = context.PrimaryEntityName;
                         followup["prioritycode"] = new OptionSetValue(1);// Normal
 
-                        string regardingobjectidType = "account";
+                        string regardingobjectidType = "contact";
                         Guid regardingobjectid = Guid.Empty;
 
                         // Refer to the account in the task activity.

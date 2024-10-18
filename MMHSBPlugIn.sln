@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35323.107
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMHSBPlugIn", "MMHSBPlugIn\MMHSBPlugIn.csproj", "{FB811AE9-9CBD-493C-BF34-E5B0D3D784BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomWorkflowDemo", "CustomWorkflowDemo\CustomWorkflowDemo.csproj", "{495307F3-C8D0-4947-AFCB-8FA958A69C8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FB811AE9-9CBD-493C-BF34-E5B0D3D784BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB811AE9-9CBD-493C-BF34-E5B0D3D784BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB811AE9-9CBD-493C-BF34-E5B0D3D784BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{495307F3-C8D0-4947-AFCB-8FA958A69C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{495307F3-C8D0-4947-AFCB-8FA958A69C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{495307F3-C8D0-4947-AFCB-8FA958A69C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{495307F3-C8D0-4947-AFCB-8FA958A69C8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
